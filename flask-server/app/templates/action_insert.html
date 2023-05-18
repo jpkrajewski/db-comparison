@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Insert comparison{% endblock %}
+
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1>MariaDB (SQL)</h1>
+        </div>
+        <div class="col-md-6">
+          <h1>MongoDB (NOSQL)</h1>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-6">
+          <form method="post">
+            <div class="form-group">
+              <label for="sqldb-name">Name:</label>
+              <input type="text" id="sqldb-name" name="sqldb-name" class="form-control" value="{{ name }}" required>
+            </div>
+            <div class="form-group">
+              <label for="sqldb-email">Email:</label>
+              <input type="email" id="sqldb-email" name="sqldb-email" class="form-control" value="{{ email }}" required>
+            </div>
+            <div class="form-group">
+              <label for="sqldb-message">Message:</label>
+              <textarea id="sqldb-message" name="sqldb-message" class="form-control" required>{{ message }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <form method="post">
+            <div class="form-group">
+              <label for="nosqldb-name">Name:</label>
+              <input type="text" id="nosqldb-name" name="nosqldb-name" class="form-control" value="{{ name }}" required>
+            </div>
+            <div class="form-group">
+              <label for="nosqldb-email">Email:</label>
+              <input type="email" id="nosqldb-email" name="nosqldb-email" class="form-control" value="{{ email }}" required>
+            </div>
+            <div class="form-group">
+              <label for="nosqldb-message">Message:</label>
+              <textarea id="nosqldb-message" name="nosqldb-message" class="form-control" required>{{ message }}</textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="field-name-0">Field Name:</label>
+                <input type="text" id="nosqldb-name-0" name="key-0" class="form-control" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="field-value-0">Field Value:</label>
+                <input type="text" id="nosqldb-value-0" name="value-0" class="form-control" required>
+              </div>
+              <div id="fields-container" style="margin-right: 5px; margin-left: 5px; width:100%;"></div>
+              <div class="form-group col-md-12">
+                <button type="button" class="btn btn-primary" id="add-field-button">Add Field</button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+    {% block scripts %}
+      <script>
+      $(function() {
+        var counter = 1;
+        $('#add-field-button').click(function() {
+          var newFieldHtml = `
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="nosqldb-name-${counter}">Field Name:</label>
+                <input type="text" id="nosqldb-name-${counter}" name="key-${counter}" class="form-control" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="nosqldb-value-${counter}">Field Value:</label>
+                <input type="text" id="nosqldb-value-${counter}" name="value-${counter}" class="form-control" required>
+              </div>
+            </div>
+          `;
+          $('#fields-container').append(newFieldHtml);
+          counter++;
+        });
+      });
+    </script>
+  {% endblock %}
+{% endblock %}
