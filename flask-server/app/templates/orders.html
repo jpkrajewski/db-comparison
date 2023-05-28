@@ -1,0 +1,47 @@
+<!-- Orders Table -->
+<h1>Orders</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User ID</th>
+            <th>Order Date</th>
+            <th>Total Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user_id }}</td>
+            <td>{{ order.order_date }}</td>
+            <td>{{ order.total_amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Order Items Table -->
+<h1>Order Items</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Item ID</th>
+            <th>Order ID</th>
+            <th>Product ID</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order_item in order_items %}
+        <tr>
+            <td>{{ order_item.id }}</td>
+            <td>{{ order_item.order_id }}</td>
+            <td>{{ order_item.product_id }}</td>
+            <td>{{ order_item.quantity }}</td>
+            <td>{{ order_item.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

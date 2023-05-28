@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center">{{ product.name }}</h1>
+                    <p class="card-text text-center">{{ product.description }}</p>
+                    <p class="card-text text-center"><strong>Price:</strong> ${{ product.price }}</p>
+                    <ul class="list-group">
+                        {% for review in product.reviews %}
+                        <li class="list-group-item">
+                            <p><strong>User:</strong> <a href="{{ url_for('views.user_details', id=review.user.id) }}">{{ review.user.username }}</a></p>
+                            <p><strong>Rating:</strong> {{ review.rating }}</p>
+                            <p><strong>Comment:</strong> {{ review.comment }}</p>
+                            <p><strong>Created At:</strong> {{ review.created_at }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{{ url_for('views.edit_product', id=product.id) }}" class="btn btn-primary">Edit</a>
+                    <form action="{{ url_for('views.delete_product', id=product.id) }}" method="POST" style="display: inline-block;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

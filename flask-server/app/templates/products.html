@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h1>Products</h1>
+            <a href="{{ url_for('views.create_product') }}" class="btn btn-primary">Add Product</a>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td><a href="{{ url_for('views.product_detail', id=product.id) }}">{{ product.name }}</a></td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.description }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

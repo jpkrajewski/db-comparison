@@ -1,19 +1,24 @@
 import os
 import logging
-from faker import Faker
+import random
+from datetime import datetime
 
+from faker import Faker
 from flask import Flask
 
 from app.models import db, User, Product, Order, OrderItem, Review
-from app.routes import simple_page
+from app.routes import views, analytics_apiv1
+from pymongo import MongoClient
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
-    app.register_blueprint(simple_page)
+    app.register_blueprint(views)
+    app.register_blueprint(analytics_apiv1)
     configure_logging()
     configure_database(app)
 
     return app
+
 
 def configure_logging():
     logging.basicConfig(
@@ -22,10 +27,10 @@ def configure_logging():
         handlers=[logging.StreamHandler()]
     )
 
+
 def configure_database(app):
 
-    password_path = os.getenv('DATABASE_PASSWORD')
-    with open(password_path, 'r') as file:
+    with open(os.getenv('DATABASE_PASSWORD'), 'r') as file:
         password = file.read()
 
     if password is None:
@@ -34,11 +39,13 @@ def configure_database(app):
 
     database_uri = os.getenv('SQLALCHEMY_DATABASE_URI')
     if database_uri is None:
-        logging.error('SQLALCHEMY_DATABASE_URI environment variable is not set.')
+        logging.error(
+            'SQLALCHEMY_DATABASE_URI environment variable is not set.'
+        )
         return
 
     database_uri = database_uri.replace(
-        'PASSWORD_PLACEHOLDER', 
+        'PASSWORD_PLACEHOLDER',
         password
     )
 
@@ -120,3 +127,31 @@ def seed_data():
 
     # Commit the changes to the database
     db.session.commit()
+
+    client = MongoClient('mongo:27017')
+    mongo_db = client['analytics']  
+    collection_analytics_v1 = mongo_db['analytics_v1']
+
+    documents = []
+
+    for _ in range(500):
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=365)
+        keywords = generate_keywords(random.choice([True, False]))
+        document = {
+            'action': 'search',
+            'keywords_count': len(keywords),
+            'keywords_items': keywords,
+            'searched_at': fake.date_between(start_date=start_date, end_date=end_date)
+        }
+        documents.append(document)
+    collection_analytics_v1.insert_many(documents)
+
+def generate_keywords(is_list):
+    fake = Faker()
+    if is_list:
+        num_keywords = random.randint(1, 5)  # Generate 1 to 5 keywords
+        keywords = [fake.word() for _ in range(num_keywords)]
+    else:
+        keywords = fake.word()
+    return keywords

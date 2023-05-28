@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Product{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <h1>Create Query</h1>
+</div>
+<div class="row">
+    <form method="post">
+        <div class="form-group">
+            <label for="field">Field Name</label>
+            <input type="text" class="form-control" id="field" name="field" required>
+        </div>
+        <div class="form-group">
+            <label for="operator">Operator</label>
+            <select class="form-control" id="operator" name="operator" required>
+                <option value="$eq">Equal To</option>
+                <option value="$regex">Regular Expression</option>
+                <option value="$in">In List</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="value">Value</label>
+            <input type="text" class="form-control" id="value" name="value" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+    
+    <div class="row">
+        <h1>Query Results</h1>
+    </div>
+    {% if documents %}
+        <div class="row">
+            {% for document in documents %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Document {{ loop.index }}</h5>
+                            <ul class="list-group">
+                                {% for field, value in document.items() %}
+                                    <li class="list-group-item">
+                                        <strong>{{ field }}</strong>: {{ value }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No documents found.</p>
+        {% endif %}
+        </div>
+{% endblock %}

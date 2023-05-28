@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}User Details{% endblock %}
+
+{% block content %}
+    <h1>User Details</h1>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ user.email }}</td>
+        </tr>
+    </table>
+    {% if user.reviews %}
+    <h2>Reviews by {{ user.username }}</h2>
+    <ul class="list-group">
+        {% for review in user.reviews %}
+        <li class="list-group-item">
+            <p><strong>Rating:</strong> {{ review.rating }}</p>
+            <p><strong>Comment:</strong> {{ review.comment }}</p>
+            <p><strong>Created At:</strong> {{ review.created_at }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form action="{{ url_for('views.delete_user', id=user.id) }}" method="POST" style="display: inline-block;">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+{% endblock %}

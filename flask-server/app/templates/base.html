@@ -7,28 +7,33 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">Your Website</a>
+            <a class="navbar-brand" href="#">Shop Admin Profile</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('views.analytics_page') }}">Analytics</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('action_insert') }}">Insert</a>
+                        <a class="nav-link" href="{{ url_for('views.users') }}">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
+                        <a class="nav-link" href="{{ url_for('views.products') }}">Products</a>
                     </li>
                 </ul>
+                <!-- Add the search bar -->
+                <form id="search-form" class="form-inline ml-auto" method="GET" action="{{ url_for('views.products') }}">
+                    <input id="search-input" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keywords">
+                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+                </form>
             </div>
         </nav>
     </header>
 
-    <div class="content">
+    <div class="container">
         {% block content %}{% endblock %}
     </div>
 
@@ -38,6 +43,59 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+    // Track user clicks
+    document.addEventListener('click', function(event) {
+        let target = event.target; // The element that was clicked
+        let timestamp = new Date().toISOString(); // Current timestamp
+        if(target.tagName === "BODY") return;
+        // Get user's IP address and location
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                let user = {
+                    action: 'click',
+                    target: target.tagName, // Tag name of the clicked element
+                    textInside: target.innerText, // Text inside the clicked element
+                    cursorPositionX: event.clientX, // Cursor position X
+                    cursorPositionY: event.clientY, // Cursor position Y
+                    viewportWidth: window.innerWidth, // Viewport width
+                    viewportHeight: window.innerHeight, // Viewport height
+                    timestamp: timestamp, // Current timestamp
+                    ipAddress: data.ip, // User's IP address
+                    location: `${data.city}, ${data.region}, ${data.country_name}`, // User's approximate location
+                    userAgent: navigator.userAgent, // User agent string
+                    language: navigator.language // User's preferred language
+                };
+
+                // Send the click event data with user data to your analytics server or service
+                sendAnalyticsData(user);
+            })
+            .catch(error => {
+                console.error('Error retrieving user data:', error);
+            });
+    });
+    // Function to send analytics data to your server or service
+    function sendAnalyticsData(userData) {
+        fetch('http://localhost:8000/apiv1/analytics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Analytics data sent successfully');
+            } else {
+                console.error('Error sending analytics data:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error sending analytics data:', error);
+        });
+    }
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
